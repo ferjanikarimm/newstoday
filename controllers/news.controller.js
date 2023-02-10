@@ -1,4 +1,11 @@
-const { sportsModel, businessModel,entertainmentModel, healthModel,scienceModel,technologyModel} = require("../models/news");
+const {
+  sportsModel,
+  businessModel,
+  entertainmentModel,
+  healthModel,
+  scienceModel,
+  technologyModel,
+} = require("../models/news");
 
 const getAllModelNews = async (model) => {
   try {

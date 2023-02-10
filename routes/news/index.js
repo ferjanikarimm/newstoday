@@ -7,6 +7,6 @@ module.exports = (app) => {
   router.get("/:category", newsController.getAllCategoryNews);
 
   router.get("/:category/:id", newsController.getPost);
-
+  
   app.use("/api/news", router);
 };

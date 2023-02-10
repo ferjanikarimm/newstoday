@@ -6,6 +6,7 @@ const getCategoryNewsApi = (category) =>
 const getCategoryNews = async ({ categoryModel, category }) => {
   try {
     //  remove all sports articles
+    // TODO SET OLD NEWS TO ARCHIVE 
     await categoryModel.deleteMany();
 
     const response = await axios.get(getCategoryNewsApi(category));

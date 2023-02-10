@@ -31,7 +31,10 @@ app.get("/", (req, res) => {
 });
 
 require("./routes/news")(app);
+require("./routes/user")(app);
 
-app.listen(3000, () => {
-  console.log("app start 3000");
+
+
+app.listen(5000, () => {
+  console.log("app start 5000");
 });
