@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const newsSchema = mongoose.Schema({
   source: {
@@ -24,6 +25,36 @@ const newsSchema = mongoose.Schema({
   },
   content: {
     type: String,
+  },
+  likes: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+      },
+    },
+  ],
+  comments: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+      },
+      text: {
+        type: String,
+        required: true,
+      },
+      name: {
+        type: String,
+      },
+      date: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+
+  archive: {
+    type: Boolean,
+    default: false,
   },
 });
 

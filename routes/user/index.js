@@ -1,10 +1,8 @@
+let router = require("express").Router();
+const userController = require("../../controllers/user.controller.js");
+const auth = require("../../middlewares/verifyToken");
+
 module.exports = (app) => {
-  const userController = require("../../controllers/user.controller.js");
-
-  const auth = require("../../middlewares/verifyToken");
-
-  let router = require("express").Router();
-
   // register new user
   router.post("/register", userController.register);
 
@@ -12,9 +10,10 @@ module.exports = (app) => {
   router.post("/login", userController.login);
 
   // verify email
-  router.put("/verifyEmail", (req, res) => {
-    userController.virifyEmail(req, res);
-  });
+  router.put("/verifyEmail", userController.verifyEmail);
+
+  // change user to admin
+  router.post("/change_to_admin", auth, userController.change_to_admin);
 
   app.use("/api/user", router);
 };

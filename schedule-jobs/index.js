@@ -12,12 +12,14 @@ const scheduleJobs = () => {
     console.log("============= Schedule Jobs Startd ==================");
     console.log("=====================================================");
 
-    await getSportsNews();
-    await getBusinessNews();
-    await getentertainmentNews();
-    await gethealthNews();
-    await getscienceNews();
-    await gettechnologyNews();
+    await Promise.all([
+      getSportsNews(),
+      getBusinessNews(),
+      getentertainmentNews(),
+      gethealthNews(),
+      getscienceNews(),
+      gettechnologyNews(),
+    ]);
 
     console.log("===================== / END =======================\n\n");
   });

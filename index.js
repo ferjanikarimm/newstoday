@@ -21,7 +21,7 @@ database.on("connected", () => {
 const app = express();
 
 // start schedule jobs
-scheduleJobs();
+// scheduleJobs();
 
 app.use(express.json());
 
@@ -32,8 +32,6 @@ app.get("/", (req, res) => {
 
 require("./routes/news")(app);
 require("./routes/user")(app);
-
-
 
 app.listen(5000, () => {
   console.log("app start 5000");

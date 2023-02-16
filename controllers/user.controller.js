@@ -1,63 +1,49 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const { RegisterValidation } = require("../utils/jobs/RegisterValidation");
+const { RegisterValidation } = require("../utils/auth/RegisterValidation");
 const jwt = require("jsonwebtoken");
+const { getToken } = require("../utils/auth");
 require("dotenv").config();
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PWD = process.env.ADMIN_PWD;
+const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE;
 
 exports.login = async (req, res) => {
-
-    try {
-      let SECRETKEY = process.env.SECRETKEY;
-      let { email, password } = req.body;
-      let user = await User.findOne({ email });
-      if (!user) {
-        return res
-          .status(401)
-          .json({
-            status: false,
-            error: "invalid email or pasword,please try again",
-          });
-      }
-      let verifyPwd = await bcrypt.compare(password, user.password);
-      if (!verifyPwd) {
-        return res.status(401).json({
-          status: false,
-          error: "Invalid email or password , please try again.",
-        });
-      }
-      let token = jwt.sign(
-        {
-          email: user.email,
-          isBanned: user.isBanned,
-          isAdmin: user.isAdmin,
-          isVerified: user.isVerified,
-          isUser: user.isUser,
-          id: user._id,
-        },
-
-        SECRETKEY,
-        { expiresIn: "60" }
-      );
-      res.status(200).json({
-        status: true,
-        data: {
-          isBanned: user.isBanned,
-          isAdmin: user.isAdmin,
-          isVerified: user.isVerified,
-          isUser: user.isUser,
-          id: user._id,
-          token,
-        },
+  try {
+    let { email, password } = req.body;
+    let user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        error: "invalid email or pasword,please try again",
       });
-    } catch (error) {
-      if (error) throw error;
-      res.status(400).json({ error });
     }
- 
+    let verifyPwd = await bcrypt.compare(password, user.password);
+    if (!verifyPwd) {
+      return res.status(401).json({
+        status: false,
+        error: "Invalid email or password , please try again.",
+      });
+    }
+    let token = getToken(user);
+    res.status(200).json({
+      status: true,
+      data: {
+        isBanned: user.isBanned,
+        isAdmin: user.isAdmin,
+        isVerified: user.isVerified,
+        isUser: user.isUser,
+        id: user._id,
+        token,
+      },
+    });
+  } catch (error) {
+    if (error) throw error;
+    res.status(400).json({ error });
+  }
 };
+
 ///////------- register---------
 exports.register = async (req, res) => {
   try {
@@ -142,4 +128,57 @@ exports.register = async (req, res) => {
     if (error) throw error;
     res.status(400).json({ error });
   }
+};
+
+// ======== verifyEmail ===========
+exports.verifyEmail = async (req, res) => {
+  try {
+    let { email } = req.query;
+    let verifyEmail = await User.findOneAndUpdate(
+      { email },
+      {
+        $set: { isVerified: true },
+      },
+
+      { new: true }
+    );
+    if (!verifyEmail) {
+      return res.status(401).json({ status: false, message: "Wrong data" });
+    }
+    res.status(200).json({ status: true, message: "Your account is verified" });
+  } catch (error) {
+    if (error) throw error;
+    res.status(401).json({ status: false, error });
+  }
+};
+// ======== change_to_admin =======
+exports.change_to_admin = async (req, res) => {
+  const { email } = req.auth;
+  const { secret_code } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) return res.status(400).json({ err: "user not found " });
+  if (secret_code !== ADMIN_SECRET_CODE)
+    return res.status(400).json({ err: "secret code not valid" });
+
+  if (user.isAdmin) return res.json({ message: "user already is an admin" });
+
+  user.isAdmin = true;
+  await user.save();
+
+  // ==== send user the new jwt ========
+  let token = getToken(user);
+  res.status(200).json({
+    status: true,
+    data: {
+      isBanned: user.isBanned,
+      isAdmin: user.isAdmin,
+      isVerified: user.isVerified,
+      isUser: user.isUser,
+      id: user._id,
+      token,
+    },
+  });
+
+  return res.json(user);
 };

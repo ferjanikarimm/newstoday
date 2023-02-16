@@ -5,9 +5,15 @@ const getCategoryNewsApi = (category) =>
 
 const getCategoryNews = async ({ categoryModel, category }) => {
   try {
-    //  remove all sports articles
-    // TODO SET OLD NEWS TO ARCHIVE 
-    await categoryModel.deleteMany();
+    // set old news to archive
+    const conditions = { archive: false };
+    const update = {
+      $set: {
+        archive: true,
+      },
+    };
+    const options = { multi: true, upsert: true };
+    await categoryModel.updateMany(conditions, update, options);
 
     const response = await axios.get(getCategoryNewsApi(category));
     // handle success
