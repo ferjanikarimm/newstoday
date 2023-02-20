@@ -1,0 +1,12 @@
+import { Button } from "@mantine/core";
+import React from "react";
+
+function Home() {
+  return (
+    <div>
+      <Button>Click me!</Button>
+    </div>
+  );
+}
+
+export default Home;
