@@ -1,10 +1,9 @@
 import { Box, Button, Checkbox, PasswordInput, Title } from "@mantine/core";
-import { IconMail } from "@tabler/icons-react";
+import { IconMail, IconUserCircle } from "@tabler/icons-react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import TextInput from "../Forms/TextInput";
 import { requiredValidator } from "../Forms/TextInput/validators";
-
 function Loginform() {
   const {
     register,
@@ -32,6 +31,19 @@ function Loginform() {
       </Title>
       <br />
       <form onSubmit={handleSubmit(onSubmit)}>
+        <TextInput
+          size="lg"
+          name="username"
+          placeholder="username"
+          required={true}
+          register={register}
+          errors={errors}
+          validate={{
+            requiredValidator,
+            // emailValidator
+          }}
+          rightSection={<IconUserCircle  color="#A9A9A9" />}
+        />
         <br />
         <TextInput
           size="lg"
@@ -42,10 +54,9 @@ function Loginform() {
           errors={errors}
           validate={{
             requiredValidator,
-
             // emailValidator
           }}
-          rightSection={<IconMail color="#A9A9A9" />}
+          rightSection={ <IconMail color="#A9A9A9"  />}
         />
         <br />
         <PasswordInput
@@ -58,7 +69,18 @@ function Loginform() {
           register={register}
           errors={errors}
           validate={{ requiredValidator }}
-          
+        />
+        <br />
+        <PasswordInput
+          size="lg"
+          name="password"
+          placeholder="Password"
+          withAsterisk
+          radius="xl"
+          required={true}
+          register={register}
+          errors={errors}
+          validate={{ requiredValidator }}
         />
 
         <br />
@@ -78,7 +100,7 @@ function Loginform() {
           color="red"
           radius="xl"
         >
-          Sign In
+          Sign Up
         </Button>
       </form>
     </Box>

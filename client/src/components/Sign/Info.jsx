@@ -23,16 +23,16 @@ const Info = () => {
     <MediaQuery>
       <Box>
         <BackgroundImage
-          src="https://images.pexels.com/photos/950754/pexels-photo-950754.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+          src="https://images.pexels.com/photos/1752724/pexels-photo-1752724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
           sx={{ height: "100vh" }}
         >
           <Center className={classes.textContainer}>
             <Text size="68px">
               From art to politics, <br />
               <Text span c="#FF3F4B" inherit>
-                anything 
+                anything
               </Text>
-               in news
+              in news
             </Text>
           </Center>
         </BackgroundImage>

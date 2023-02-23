@@ -12,9 +12,6 @@ const PublicNavBar = () => {
           <NavLink to="/sign">Sign</NavLink>
         </li>
         <li>
-          <NavLink to="/register">Register</NavLink>
-        </li>
-        <li>
           <NavLink to="/loading">Loading</NavLink>
         </li>
         <li>
