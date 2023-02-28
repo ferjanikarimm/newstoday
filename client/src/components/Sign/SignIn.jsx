@@ -1,11 +1,21 @@
-import { Box, Button, Checkbox, PasswordInput, Title } from "@mantine/core";
-import { IconMail } from "@tabler/icons-react";
-import React from "react";
+import { Box, Button, Checkbox, Title, RingProgress } from "@mantine/core";
+import { IconMail, IconEye, IconEyeOff } from "@tabler/icons-react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
 import TextInput from "../Forms/TextInput";
-import { requiredValidator } from "../Forms/TextInput/validators";
+import {
+  requiredValidator,
+  emailValidator,
+  passwordValidator,
+} from "../Forms/TextInput/validators";
+
+
 
 function Loginform() {
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -14,9 +24,37 @@ function Loginform() {
     reValidateMode: "onChange",
   });
 
-  const onSubmit = (data) => console.log(data);
+  const mutation = useMutation(async (data) => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/user/login",
+        data
+      );
+      return res.data.data;
+    } catch (error) {
+      console.log(error.message);
+      throw new Error(error.response.data.message);
+    }
+  });
 
-  console.log({ errors });
+  const { isLoading, isError, data, error, mutate } = mutation;
+
+  useEffect(() => {
+    if (data?.token) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("isBanned", data.isBanned);
+      localStorage.setItem("isVerified", data.isVerified);
+      localStorage.setItem("isAdmin", data.isAdmin);
+
+      
+    }
+  }, [data]);
+
+  const onSubmit = (data) => {
+    mutate(data);
+  };
+
+  const isFormValid = Object.keys(errors).length === 0;
 
   return (
     <Box
@@ -25,10 +63,7 @@ function Loginform() {
       }}
     >
       <Title order={1} size="50px" color="#00008B">
-        Create
-      </Title>
-      <Title order={1} size="50px" color="#00008B">
-        an account{" "}
+        Create an account
       </Title>
       <br />
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -42,14 +77,14 @@ function Loginform() {
           errors={errors}
           validate={{
             requiredValidator,
-
-            // emailValidator
+            emailValidator,
           }}
           rightSection={<IconMail color="#A9A9A9" />}
         />
         <br />
-        <PasswordInput
+        <TextInput
           size="lg"
+          type={showPassword ? "text" : "password"}
           name="password"
           placeholder="Password"
           withAsterisk
@@ -57,10 +92,18 @@ function Loginform() {
           required={true}
           register={register}
           errors={errors}
-          validate={{ requiredValidator }}
-          
+          validate={{ requiredValidator, passwordValidator }}
+          rightSection={
+            showPassword ? (
+              <IconEyeOff
+                color="#A9A9A9"
+                onClick={() => setShowPassword(false)}
+              />
+            ) : (
+              <IconEye color="#A9A9A9" onClick={() => setShowPassword(true)} />
+            )
+          }
         />
-
         <br />
         <Checkbox
           label="I have read the Terms & Agreement"
@@ -77,8 +120,23 @@ function Loginform() {
           type="submit"
           color="red"
           radius="xl"
+          disabled={isLoading || !isFormValid}
         >
-          Sign In
+          {isLoading ? (
+            <RingProgress
+              size={40}
+              thickness={5}
+              roundCaps
+              sections={[
+                { value: 40, color: "#FFF8DC" },
+                { value: 15, color: "#FFF8DC" },
+                { value: 15, color: "#FFF8DC" },
+                { value: 15, color: "#FFF8DC" },
+              ]}
+            />
+          ) : (
+            "Sign In"
+          )}
         </Button>
       </form>
     </Box>

@@ -1,11 +1,6 @@
-const emailValidator = (email) => {
-  if (!email) {
-    return "Email is required";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return "Invalid email format";
-  } else {
-    return null;
-  }
+const emailValidator = (fieldValue) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return !emailRegex.test(fieldValue) ? "Invalid email address" : null;
 };
 
 export default emailValidator;

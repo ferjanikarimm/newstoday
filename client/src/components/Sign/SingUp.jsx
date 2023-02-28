@@ -1,48 +1,74 @@
-import { Box, Button, Checkbox, PasswordInput, Title } from "@mantine/core";
-import { IconMail, IconUserCircle } from "@tabler/icons-react";
-import React from "react";
+import { Box, Button, Checkbox, Title, RingProgress } from "@mantine/core";
+import {
+  IconMail,
+  IconUserCircle,
+  IconEye,
+  IconEyeOff,
+} from "@tabler/icons-react";
+import React, { useState } from "react";
+import axios from "axios";
 import { useForm } from "react-hook-form";
 import TextInput from "../Forms/TextInput";
-import { requiredValidator } from "../Forms/TextInput/validators";
-function Loginform() {
+import {
+  requiredValidator,
+  emailValidator,
+  passwordValidator,
+
+} from "../Forms/TextInput/validators";
+import { useMutation } from "react-query";
+
+function SignupForm() {
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    reValidateMode: "onChange",
+  } = useForm({ mode: "onChange" });
+
+
+  const [showPassword, setShowPassword] = useState(false);
+  
+
+  const { isLoading, mutate } = useMutation(async (data) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/user/register",
+        data,
+        
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        error.response?.data?.message ||
+          "An error occurred while registering user."
+      );
+    }
   });
+  
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    mutate(data);
+  };
 
-  console.log({ errors });
+  const isFormValid = Object.keys(errors).length === 0;
 
   return (
-    <Box
-      sx={{
-        padding: 15,
-      }}
-    >
+    <Box sx={{ padding: 15 }}>
       <Title order={1} size="50px" color="#00008B">
-        Create
-      </Title>
-      <Title order={1} size="50px" color="#00008B">
-        an account{" "}
+        Create an account
       </Title>
       <br />
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextInput
           size="lg"
           name="username"
-          placeholder="username"
+          placeholder="Username"
           required={true}
           register={register}
           errors={errors}
-          validate={{
-            requiredValidator,
-            // emailValidator
-          }}
-          rightSection={<IconUserCircle  color="#A9A9A9" />}
+          validate={{ requiredValidator }}
+          rightSection={<IconUserCircle color="#A9A9A9" />}
         />
         <br />
         <TextInput
@@ -52,37 +78,53 @@ function Loginform() {
           required={true}
           register={register}
           errors={errors}
+          validate={{ requiredValidator, emailValidator }}
+          rightSection={<IconMail color="#A9A9A9" />}
+        />
+        <br />
+        <TextInput
+          size="lg"
+          type={showPassword ? "text" : "password"}
+          name="password"
+          placeholder="Password"
+          withAsterisk
+          radius="xl"
+          required={true}
+          register={register}
+          errors={errors}
+          validate={{ requiredValidator, passwordValidator }}
+          rightSection={
+            <IconEye
+              color="#A9A9A9"
+              onClick={() => setShowPassword((prev) => !prev)}
+            />
+          }
+        />
+        <br />
+        <TextInput
+          size="lg"
+          type={showPassword ? "text" : "password"}
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          withAsterisk
+          radius="xl"
+          required={true}
+          register={register}
+          errors={errors}
           validate={{
             requiredValidator,
-            // emailValidator
           }}
-          rightSection={ <IconMail color="#A9A9A9"  />}
+          rightSection={
+            showPassword ? (
+              <IconEyeOff
+                color="#A9A9A9"
+                onClick={() => setShowPassword(false)}
+              />
+            ) : (
+              <IconEye color="#A9A9A9" onClick={() => setShowPassword(true)} />
+            )
+          }
         />
-        <br />
-        <PasswordInput
-          size="lg"
-          name="password"
-          placeholder="Password"
-          withAsterisk
-          radius="xl"
-          required={true}
-          register={register}
-          errors={errors}
-          validate={{ requiredValidator }}
-        />
-        <br />
-        <PasswordInput
-          size="lg"
-          name="password"
-          placeholder="Password"
-          withAsterisk
-          radius="xl"
-          required={true}
-          register={register}
-          errors={errors}
-          validate={{ requiredValidator }}
-        />
-
         <br />
         <Checkbox
           label="I have read the Terms & Agreement"
@@ -99,12 +141,27 @@ function Loginform() {
           type="submit"
           color="red"
           radius="xl"
+          disabled={isLoading || !isFormValid}
         >
-          Sign Up
+          {isLoading ? (
+            <RingProgress
+              size={40}
+              thickness={5}
+              roundCaps
+              sections={[
+                { value: 40, color: "#FFF8DC" },
+                { value: 15, color: "#FFF8DC" },
+                { value: 15, color: "#FFF8DC" },
+                { value: 15, color: "#FFF8DC" },
+              ]}
+            />
+          ) : (
+            "Sign In"
+          )}
         </Button>
       </form>
     </Box>
   );
 }
 
-export default Loginform;
+export default SignupForm;

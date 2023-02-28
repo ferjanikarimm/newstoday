@@ -1,6 +1,7 @@
 const express = require("express");
 const scheduleJobs = require("./schedule-jobs");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 require("dotenv").config();
 
@@ -24,6 +25,12 @@ const app = express();
 // scheduleJobs();
 
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // simple route
 app.get("/", (req, res) => {
