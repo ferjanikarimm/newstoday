@@ -5,12 +5,19 @@ import { useViewportSize } from "@mantine/hooks";
 import Info from "../../components/Sign/Info";
 import SignInForm from "../../components/Sign/SignIn";
 import SignUpForm from "../../components/Sign/SingUp";
+import { useNavigate } from "react-router-dom";
 const SIGN_IN = "SIGN_IN";
 const SIGN_UP = "SIGN_Up";
 
 function Login() {
   const { width } = useViewportSize();
   const [signForm, setSignForm] = useState(SIGN_IN, SIGN_UP);
+  const navigate = useNavigate();
+  const profile = localStorage.getItem("profile");
+  if (profile) navigate("/all");
+
+  if (profile) return null;
+
   return (
     <Grid>
       <Grid.Col span={12} sm={6}>

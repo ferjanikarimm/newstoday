@@ -1,19 +1,20 @@
 import { Box, Button, Checkbox, Title, RingProgress } from "@mantine/core";
 import { IconMail, IconEye, IconEyeOff } from "@tabler/icons-react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import TextInput from "../Forms/TextInput";
 import {
   requiredValidator,
   emailValidator,
   passwordValidator,
 } from "../Forms/TextInput/validators";
-
-
+import setAuthToken from "../../utils/setAuthToken";
 
 function Loginform() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -24,31 +25,27 @@ function Loginform() {
     reValidateMode: "onChange",
   });
 
-  const mutation = useMutation(async (data) => {
-    try {
-      const res = await axios.post(
-        "http://localhost:5000/api/user/login",
-        data
-      );
-      return res.data.data;
-    } catch (error) {
-      console.log(error.message);
-      throw new Error(error.response.data.message);
+  const mutation = useMutation(
+    async (data) => {
+      try {
+        const res = await axios.post(
+          "http://localhost:5000/api/user/login",
+          data
+        );
+        return res.data.data;
+      } catch (error) {
+        console.log(error.message);
+        throw new Error(error.response.data.message);
+      }
+    },
+    {
+      onSuccess: (profile) => {
+        setAuthToken(profile, navigate);
+      },
     }
-  });
+  );
 
-  const { isLoading, isError, data, error, mutate } = mutation;
-
-  useEffect(() => {
-    if (data?.token) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("isBanned", data.isBanned);
-      localStorage.setItem("isVerified", data.isVerified);
-      localStorage.setItem("isAdmin", data.isAdmin);
-
-      
-    }
-  }, [data]);
+  const { isLoading, mutate } = mutation;
 
   const onSubmit = (data) => {
     mutate(data);

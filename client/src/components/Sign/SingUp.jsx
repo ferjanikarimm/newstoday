@@ -13,53 +13,60 @@ import {
   requiredValidator,
   emailValidator,
   passwordValidator,
-
 } from "../Forms/TextInput/validators";
 import { useMutation } from "react-query";
 
 function SignupForm() {
-  
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ mode: "onChange" });
-
-
-  const [showPassword, setShowPassword] = useState(false);
-  
-
-  const { isLoading, mutate } = useMutation(async (data) => {
+  } = useForm();
+  const verifyEmailMutation = useMutation(async (email) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/user/register",
-        data,
-        
+      const token = localStorage.getItem("token");
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+      const res = await axios.post(
+        "http://localhost:5000/api/user/verifyEmail",
+        { email },
+        config
       );
-      return response.data;
+      return res.data;
     } catch (error) {
-      console.error(error);
-      throw new Error(
-        error.response?.data?.message ||
-          "An error occurred while registering user."
-      );
+      console.log(error.message);
+      throw new Error(error.response.data.message);
     }
   });
-  
-
-  const onSubmit = (data) => {
-    mutate(data);
-  };
+  const mutation = useMutation(async (data) => {
+    try {
+      const token = localStorage.getItem("token");
+      const config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+      const res = await axios.post(
+        "http://localhost:5000/api/user/register",
+        data,
+        config
+      );
+      return res.data.data;
+    } catch (error) {
+      console.log(error.message);
+      throw new Error(error.response.data.message);
+    }
+  });
 
   const isFormValid = Object.keys(errors).length === 0;
-
+ const { isLoading} = mutation;
   return (
     <Box sx={{ padding: 15 }}>
       <Title order={1} size="50px" color="#00008B">
         Create an account
       </Title>
       <br />
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
         <TextInput
           size="lg"
           name="username"
@@ -104,7 +111,7 @@ function SignupForm() {
         <TextInput
           size="lg"
           type={showPassword ? "text" : "password"}
-          name="confirmPassword"
+          name="confirm_Password"
           placeholder="Confirm Password"
           withAsterisk
           radius="xl"

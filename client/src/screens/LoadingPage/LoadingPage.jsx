@@ -4,7 +4,7 @@ import { Box, Image, Loader } from "@mantine/core";
 function LoadingPage() {
   return (
     <Box
-      sx={{
+      /*sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -15,7 +15,7 @@ function LoadingPage() {
         backgroundSize: "200px ",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "left 0 bottom 0px",
-      }}
+      }}*/
     >
       <Box
         style={{

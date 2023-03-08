@@ -25,6 +25,7 @@
     "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.20",
+    "react-router-dom": "^6.8.2",
     "ui-list": "^0.6.1",
     "yarn": "^1.22.19"
   },

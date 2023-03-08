@@ -9,9 +9,9 @@ const {
 const User = require("../models/user");
 const { getModel } = require("../utils/news");
 
-const getAllModelNews = async (model) => {
+const getAllModelNews = async (model, limit) => {
   try {
-    const categoryNews = await model.find({});
+    const categoryNews = await model.find({}).limit(limit).exec();
     const count = await model.countDocuments();
     return { data: categoryNews.reverse(), count };
   } catch (err) {
@@ -54,12 +54,12 @@ exports.getAllCategoryNews = async (req, res) => {
     // ........... all
     case "all":
       let allNews = await Promise.all([
-        getAllModelNews(sportsModel),
-        getAllModelNews(businessModel),
-        getAllModelNews(entertainmentModel),
-        getAllModelNews(healthModel),
-        getAllModelNews(scienceModel),
-        getAllModelNews(technologyModel),
+        getAllModelNews(sportsModel, 3),
+        getAllModelNews(businessModel, 3),
+        getAllModelNews(entertainmentModel, 3),
+        getAllModelNews(healthModel, 3),
+        getAllModelNews(scienceModel, 3),
+        getAllModelNews(technologyModel, 3),
       ]);
 
       return res.json({
