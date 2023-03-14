@@ -7,6 +7,14 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+// Set JWT token in headers if present in local storage
+const profile = JSON.parse(localStorage.getItem("profile"));
+if (profile) {
+  const { token } = profile;
+  api.defaults.headers.common["jwt"] = token;
+}
+
 /*
   NOTE: intercept any error responses from the api
  and check if the token is no longer valid.
@@ -14,13 +22,13 @@ const api = axios.create({
  authenticated.
  logout the user if the token has expired
 */
-
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response.status === 401) {
       // clean local storage
       localStorage.removeItem("profile");
+      delete api.defaults.headers.common["jwt"];
     }
     return Promise.reject(err);
   }

@@ -14,7 +14,7 @@ function Login() {
   const [signForm, setSignForm] = useState(SIGN_IN, SIGN_UP);
   const navigate = useNavigate();
   const profile = localStorage.getItem("profile");
-  if (profile) navigate("/all");
+  if (profile) navigate("/latest");
 
   if (profile) return null;
 

@@ -8,6 +8,7 @@ function PrivateRoute({ path, element }) {
   return isAuthenticated ? (
     <Route path={path} element={element} />
   ) : (
+      
     <Navigate to="/sign" replace />
   );
 }

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Carousel } from "@mantine/carousel";
 import { Box, Button, Divider } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { Link } from "react-router-dom";
 
 const CarouselItem = ({ backgroundImg, title }) => {
   const matches = useMediaQuery("(max-width: 960px)");
@@ -38,6 +39,8 @@ const CarouselItem = ({ backgroundImg, title }) => {
               height: "50px",
               borderRadius: "30px",
             }}
+            component={Link}
+            to="/sign"
           >
             Sign Up
           </Button>

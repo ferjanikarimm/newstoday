@@ -1,11 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Card, Group, Image, Text, Textarea } from "@mantine/core";
-import { IconThumbUp, IconMessageCircle } from "@tabler/icons-react";
-
+import {
+  Button,
+  Card,
+  Group,
+  Image,
+  Text,
+  Burger,
+  Box,
+  ActionIcon,
+} from "@mantine/core";
+import { IconAdjustments, IconChevronDown, IconChevronUp, IconThumbUp } from "@tabler/icons-react";
+import Comment from "../../components/Comments";
+import { useDisclosure } from "@mantine/hooks";
 const Post = ({ post, category }) => {
   const { _id: id, title, description, urlToImage } = post;
-
+  const { toggle } = useDisclosure(false);
+  const [opened, setOpened] = useState(false);
+  const label = opened ? "Close navigation" : "Open navigation";
+  const handleCommentToggle = () => {
+    setOpened(!opened);
+  };
   return (
     <Card
       shadow="sm"
@@ -50,7 +65,7 @@ const Post = ({ post, category }) => {
 
       <Group
         position="center"
-        sx={{  marginLeft: -15, marginRight: -15, marginTop: 10 }}
+        sx={{ marginLeft: -15, marginRight: -15, marginTop: 10 }}
       >
         <Button
           variant="light"
@@ -64,46 +79,34 @@ const Post = ({ post, category }) => {
           aria-label="Like post"
         >
           <IconThumbUp size={18} alt="Like" />
-          <span style={{ marginLeft: 5 }}>0 Likes</span>
-        </Button>
-        <Button
-          variant="light"
-          color="red"
-          radius="sm"
-          style={{
-            background: "none",
-            border: "none",
-            color: "#f21856",
-          }}
-          aria-label="Comment on post"
-        >
-          <IconMessageCircle size={18} alt="Comment" />
-          <span style={{ marginLeft: 5 }}>0 Comments</span>
+          <span style={{ marginLeft: 5 }}>Likes</span>
         </Button>
       </Group>
 
-      <div style={{ marginTop: 20, padding: "10px" }}>
-        <Textarea
-          placeholder="Your comment"
-          label=""
-          labelFontSize="sm"
-          radius="xl"
-          size="sm"
-          withAsterisk
-        />
+      <Box sx={{ textAlign: "center" }}>
         <Button
-          size="xs"
-          variant="red"
-          color="red"
-          mt="sm"
           radius="sm"
-          style={{ float: "right" }}
-          onMouseEnter={(e) => (e.target.style.background = "#f8d7da")}
-          onMouseLeave={(e) => (e.target.style.background = "")}
+          color="red"
+          variant="light"
+          size="xs"
+          opened={opened}
+          onClick={handleCommentToggle}
+          aria-label={label}
         >
-          Save
+          {opened ? (
+            <>
+              <IconChevronUp size={12} style={{ marginRight: 4 }} />
+              Hide comments
+            </>
+          ) : (
+            <>
+              <IconChevronDown size={12} style={{ marginRight: 4 }} />
+              Show comments
+            </>
+          )}
         </Button>
-      </div>
+        {opened && <Comment comments={post?.comments} />}
+      </Box>
     </Card>
   );
 };

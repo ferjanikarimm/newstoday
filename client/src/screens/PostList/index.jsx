@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Container } from "@mantine/core";
+import { Box, Container, Text } from "@mantine/core";
 import Post from "../../screens/Post";
 import {
   IconAugmentedReality2,
@@ -50,19 +50,17 @@ const PostsList = ({ category, isLoading, isError, error, data }) => {
     "entertainment",
   ];
 
-  if (category === "all") {
+  if (category === "latest") {
     return (
       <Container size="md" px="xl">
         {categories.map((categoryItem) => {
           const IconComponent = categoryIcons[categoryItem];
           return (
-            <Box>
-              <IconComponent
-                size="4rem"
-                stroke={0.5}
-                color="red"
-                label={categoryItem}
-              />
+            <Box >
+              <Text fz="lg">
+                <IconComponent size="3rem" stroke={0.9} color="red"/>
+                {categoryItem}
+              </Text>
               {data?.[categoryItem]?.data?.map((post) => (
                 <Post post={post} category={categoryItem} />
               ))}

@@ -13,5 +13,5 @@ exports.getToken = (user) =>
     },
 
     SECRETKEY,
-    { expiresIn: "2 days" }
+    { expiresIn: "7d" }
   );

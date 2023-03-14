@@ -52,7 +52,7 @@ exports.getAllCategoryNews = async (req, res) => {
       });
 
     // ........... all
-    case "all":
+    case "latest":
       let allNews = await Promise.all([
         getAllModelNews(sportsModel, 3),
         getAllModelNews(businessModel, 3),
@@ -147,9 +147,12 @@ exports.addComment = async (req, res) => {
     const categoryModel = getModel(req.params.category);
     const user = await User.findById(req.auth.id).select("-password");
     const post = await categoryModel.findById(req.params.id);
+
+    console.log({ user });
+
     const newComment = {
       text: req.body.text,
-      name: user.name,
+      name: user.username,
       user: req.auth.id,
     };
     post.comments.unshift(newComment);

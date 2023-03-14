@@ -7,7 +7,7 @@ const setAuthToken = (profile, navigate) => {
     const { token } = profile;
     api.defaults.headers.common["jwt"] = token;
       localStorage.setItem("profile", JSON.stringify(profile));
-      navigate('/all')
+      navigate("/latest");
   } else {
     delete api.defaults.headers.common["jwt"];
     localStorage.removeItem("profile");

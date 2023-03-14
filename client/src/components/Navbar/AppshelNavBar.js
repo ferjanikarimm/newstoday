@@ -20,9 +20,9 @@ export default function AppshelNavBar() {
         icon={<IconNews size="1rem" stroke={1.5} color="red" />}
         label="Latest"
         component={Link}
-        to="/all"
+        to="/latest"
         color="red"
-        active={category === "all"}
+        active={category === "latest"}
       />
       <NavLink
         icon={<IconAugmentedReality2 size="1rem" stroke={1.5} color="red" />}
