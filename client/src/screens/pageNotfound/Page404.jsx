@@ -5,28 +5,28 @@ import {
   Button,
   Container,
   Group,
-  rem,
 } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   root: {
-    paddingTop: rem(80),
-    paddingBottom: rem(80),
+    paddingTop: 80,
+    paddingBottom: 80,
   },
 
   label: {
     textAlign: "center",
     fontWeight: 900,
-    fontSize: rem(220),
+    fontSize: 220,
     lineHeight: 1,
-    marginBottom: `calc(${theme.spacing.xl} * 1.5)`,
+    marginBottom: theme.spacing.xl * 1.5,
     color:
       theme.colorScheme === "dark"
         ? theme.colors.dark[4]
         : theme.colors.gray[2],
 
     [theme.fn.smallerThan("sm")]: {
-      fontSize: rem(120),
+      fontSize: 120,
     },
   },
 
@@ -34,22 +34,22 @@ const useStyles = createStyles((theme) => ({
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     textAlign: "center",
     fontWeight: 900,
-    fontSize: rem(38),
+    fontSize: 38,
 
     [theme.fn.smallerThan("sm")]: {
-      fontSize: rem(32),
+      fontSize: 32,
     },
   },
 
   description: {
-    maxWidth: rem(500),
+    maxWidth: 500,
     margin: "auto",
     marginTop: theme.spacing.xl,
-    marginBottom: `calc(${theme.spacing.xl} * 1.5)`,
+    marginBottom: theme.spacing.xl * 1.5,
   },
 }));
 
-export function NotFoundTitle() {
+const Page404 = () => {
   const { classes } = useStyles();
 
   return (
@@ -66,10 +66,14 @@ export function NotFoundTitle() {
         address, or the page has been moved to another URL.
       </Text>
       <Group position="center">
-        <Button variant="subtle" size="md">
-          Take me back to home page
-        </Button>
+        <Link to="">
+          <Button variant="subtle" size="md">
+            Take me back to home page
+          </Button>
+        </Link>
       </Group>
     </Container>
   );
-}
+};
+
+export default Page404;

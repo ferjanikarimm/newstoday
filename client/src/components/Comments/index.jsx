@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import api from "../../utils/api";
-import { Avatar, Box, Button, Grid, Group, Text, Textarea } from "@mantine/core";
+import {
+  Avatar,
+  Box,
+  Button,
+  Grid,
+  Group,
+  LoadingOverlay,
+  Text,
+  Textarea,
+} from "@mantine/core";
 import { IconMessageCircle, IconTrash } from "@tabler/icons-react";
-import { useParams } from "react-router-dom";
 
-function Comment({ comments }) {
-  const { category, id } = useParams();
 
+function Comment({ comments, isLoading, id, category, source = "list" }) {
   const numComments = comments ? comments?.length : 0;
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState("");
@@ -20,7 +27,9 @@ function Comment({ comments }) {
       }),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(`post_${id}`);
+        if (source === "post") queryClient.invalidateQueries(`post_${id}`);
+        else if (source === "list")
+          queryClient.invalidateQueries(`news_${category}`);
       },
     }
   );
@@ -36,7 +45,9 @@ function Comment({ comments }) {
       ),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(`post_${id}`);
+        if (source === "post") queryClient.invalidateQueries(`post_${id}`);
+        else if (source === "list")
+          queryClient.invalidateQueries(`news_${category}`);
       },
     }
   );
@@ -45,13 +56,11 @@ function Comment({ comments }) {
     addComment(commentText);
     setCommentText("");
   };
-const handleCommentDelete = (commentId) => {
-  if (profile) {
-    deleteComment(commentId);
-  }
-};
-
-  
+  const handleCommentDelete = (commentId) => {
+    if (profile) {
+      deleteComment(commentId);
+    }
+  };
 
   return (
     <>
@@ -106,7 +115,13 @@ const handleCommentDelete = (commentId) => {
           {isCommentAdding ? "Adding..." : "Save"}
         </Button>
       </Box>
-      <Box style={{ marginTop: 80, paddingRight: 10 }}>
+      <Box style={{ marginTop: 40, paddingRight: 10 }}>
+        <Box maxHeight={300} position="relative">
+          <LoadingOverlay
+            visible={isCommentDeleting || isCommentAdding || isLoading}
+            overlayBlur={2}
+          />
+        </Box>
         {comments &&
           comments.map((comment) => (
             <Grid key={comment._id} sx={{ marginBottom: 3 }}>

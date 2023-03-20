@@ -10,15 +10,19 @@ import {
   Menu,
   ActionIcon,
 } from "@mantine/core";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useDisclosure } from "@mantine/hooks";
 import AppshelNavBar from "../Navbar/AppshelNavBar";
-import {  IconLogout } from "@tabler/icons-react";
+import { IconLogin, IconLogout } from "@tabler/icons-react";
 
 export default function AppShellDemo() {
   const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure(false);
   const label = opened ? "Close navigation" : "Open navigation";
+  const navigate = useNavigate();
+
+  const profile = localStorage.getItem("profile");
+
   return (
     <AppShell
       styles={{
@@ -38,7 +42,7 @@ export default function AppShellDemo() {
           hidden={!opened}
           width={{ sm: 180, lg: 250 }}
         >
-          <AppshelNavBar />
+          <AppshelNavBar toggle={toggle} />
         </Navbar>
       }
       header={
@@ -71,14 +75,30 @@ export default function AppShellDemo() {
                 </ActionIcon>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Item
-                  icon={<IconLogout />}
-                  component="a"
-                  href="https://mantine.dev"
-                  target="_blank"
-                >
-                 Log out 
-                </Menu.Item>
+                {profile ? (
+                  <Menu.Item
+                    icon={<IconLogout />}
+                    component="button"
+                    onClick={() => {
+                      localStorage.removeItem("profile");
+                      navigate("/sign");
+                    }}
+                    color="green"
+                  >
+                    Log out
+                  </Menu.Item>
+                ) : (
+                  <Menu.Item
+                    icon={<IconLogin />}
+                    component="button"
+                    onClick={() => {
+                      navigate("/sign");
+                    }}
+                    color="red"
+                  >
+                    Sign
+                  </Menu.Item>
+                )}
               </Menu.Dropdown>
             </Menu>
           </Box>

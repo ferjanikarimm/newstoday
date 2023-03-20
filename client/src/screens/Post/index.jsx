@@ -1,23 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Button,
-  Card,
-  Group,
-  Image,
-  Text,
-  Burger,
-  Box,
-  ActionIcon,
-} from "@mantine/core";
-import { IconAdjustments, IconChevronDown, IconChevronUp, IconThumbUp } from "@tabler/icons-react";
+import { Button, Card, Group, Image, Text, Box } from "@mantine/core";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import Comment from "../../components/Comments";
-import { useDisclosure } from "@mantine/hooks";
-const Post = ({ post, category }) => {
+import Like from "../../components/Like";
+
+const Post = ({ post, category, isLoading, }) => {
   const { _id: id, title, description, urlToImage } = post;
-  const { toggle } = useDisclosure(false);
   const [opened, setOpened] = useState(false);
   const label = opened ? "Close navigation" : "Open navigation";
+
   const handleCommentToggle = () => {
     setOpened(!opened);
   };
@@ -63,33 +55,15 @@ const Post = ({ post, category }) => {
         {description}
       </Text>
 
-      <Group
-        position="center"
-        sx={{ marginLeft: -15, marginRight: -15, marginTop: 10 }}
-      >
-        <Button
-          variant="light"
-          color="red"
-          radius="sm"
-          style={{
-            background: "none",
-            border: "none",
-            color: "#f21856",
-          }}
-          aria-label="Like post"
-        >
-          <IconThumbUp size={18} alt="Like" />
-          <span style={{ marginLeft: 5 }}>Likes</span>
-        </Button>
-      </Group>
+      <Like category={category} post={post} id={id} />
 
-      <Box sx={{ textAlign: "center" }}>
+      <Box sx={{ textAlign: "center"  }} >
         <Button
           radius="sm"
           color="red"
           variant="light"
           size="xs"
-          opened={opened}
+          opened={opened.toString()}
           onClick={handleCommentToggle}
           aria-label={label}
         >
@@ -105,7 +79,14 @@ const Post = ({ post, category }) => {
             </>
           )}
         </Button>
-        {opened && <Comment comments={post?.comments} />}
+        {opened && (
+          <Comment
+            comments={post?.comments}
+            id={post._id}
+            category={category}
+            isLoading={isLoading}
+          />
+        )}
       </Box>
     </Card>
   );

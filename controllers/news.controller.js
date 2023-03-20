@@ -11,7 +11,10 @@ const { getModel } = require("../utils/news");
 
 const getAllModelNews = async (model, limit) => {
   try {
-    const categoryNews = await model.find({}).limit(limit).exec();
+    const categoryNews = await model
+      .find({ urlToImage: { $ne: null } })
+      .limit(limit)
+      .exec();
     const count = await model.countDocuments();
     return { data: categoryNews.reverse(), count };
   } catch (err) {

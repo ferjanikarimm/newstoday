@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Container, Text } from "@mantine/core";
+import { Box, Container, Group, Text } from "@mantine/core";
 import Post from "../../screens/Post";
 import {
   IconAugmentedReality2,
@@ -10,6 +10,7 @@ import {
   IconDeviceTv,
 } from "@tabler/icons-react";
 import LoadingPage from "../../screens/LoadingPage/LoadingPage";
+import { categories } from "../../utils/category";
 
 const PostsList = ({ category, isLoading, isError, error, data }) => {
   if (isLoading) {
@@ -32,6 +33,7 @@ const PostsList = ({ category, isLoading, isError, error, data }) => {
   if (isError) {
     return <span>Error: {error.message}</span>;
   }
+
   const categoryIcons = {
     sports: IconBallFootball,
     business: IconBusinessplan,
@@ -41,28 +43,20 @@ const PostsList = ({ category, isLoading, isError, error, data }) => {
     entertainment: IconDeviceTv,
   };
 
-  const categories = [
-    "sports",
-    "business",
-    "technology",
-    "science",
-    "health",
-    "entertainment",
-  ];
-
   if (category === "latest") {
     return (
       <Container size="md" px="xl">
         {categories.map((categoryItem) => {
+          if (!data?.[categoryItem]) return null;
           const IconComponent = categoryIcons[categoryItem];
           return (
-            <Box >
-              <Text fz="lg">
-                <IconComponent size="3rem" stroke={0.9} color="red"/>
-                {categoryItem}
-              </Text>
+            <Box key={categoryItem}>
+              <Group sx={{ marginBottom: 10, paddingTop: 20 }}>
+                <IconComponent size="3rem" stroke={0.9} color="red" />
+                <Text fz="xl">{categoryItem}</Text>
+              </Group>
               {data?.[categoryItem]?.data?.map((post) => (
-                <Post post={post} category={categoryItem} />
+                <Post key={post.id} post={post} category={categoryItem} />
               ))}
             </Box>
           );
@@ -75,7 +69,7 @@ const PostsList = ({ category, isLoading, isError, error, data }) => {
     <Container size="md" px="xl">
       <Box>
         {data?.[category]?.data?.map((post) => (
-          <Post post={post} category={category} />
+          <Post post={post} category={category} isLoading={isLoading} />
         ))}
       </Box>
     </Container>

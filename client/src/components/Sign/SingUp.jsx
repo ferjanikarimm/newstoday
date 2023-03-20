@@ -6,7 +6,7 @@ import {
   IconEyeOff,
 } from "@tabler/icons-react";
 import React, { useState } from "react";
-import axios from "axios";
+
 import { useForm } from "react-hook-form";
 import TextInput from "../Forms/TextInput";
 import {
@@ -15,58 +15,58 @@ import {
   passwordValidator,
 } from "../Forms/TextInput/validators";
 import { useMutation } from "react-query";
+import api from "../../utils/api";
+import setAuthToken from "../../utils/setAuthToken";
+import { useNavigate } from "react-router-dom";
+
 
 function SignupForm() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
-  const verifyEmailMutation = useMutation(async (email) => {
-    try {
-      const token = localStorage.getItem("token");
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-      const res = await axios.post(
-        "http://localhost:5000/api/user/verifyEmail",
-        { email },
-        config
-      );
-      return res.data;
-    } catch (error) {
-      console.log(error.message);
-      throw new Error(error.response.data.message);
-    }
-  });
-  const mutation = useMutation(async (data) => {
-    try {
-      const token = localStorage.getItem("token");
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-      const res = await axios.post(
-        "http://localhost:5000/api/user/register",
-        data,
-        config
-      );
-      return res.data.data;
-    } catch (error) {
-      console.log(error.message);
-      throw new Error(error.response.data.message);
-    }
+  } = useForm({
+    reValidateMode: "onChange",
   });
 
+  const mutation = useMutation(
+    async (data) => {
+      try {
+        const res = await api.post(
+          "http://localhost:5000/api/user/register",
+          data
+        );
+        return res.data.data;
+      } catch (error) {
+        console.log(error.message);
+        throw new Error(error.response.data.message);
+      }
+    },
+    {
+      onSuccess: (profile) => {
+        setAuthToken(profile, navigate);
+      },
+    }
+  );
+
+  const { isLoading, mutate } = mutation;
+
+  const onSubmit = (data) => {
+    mutate(data);
+  };
+
   const isFormValid = Object.keys(errors).length === 0;
- const { isLoading} = mutation;
+
   return (
     <Box sx={{ padding: 15 }}>
       <Title order={1} size="50px" color="#00008B">
         Create an account
       </Title>
       <br />
-      <form onSubmit={handleSubmit((data) => mutation.mutate(data))}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <TextInput
           size="lg"
           name="username"

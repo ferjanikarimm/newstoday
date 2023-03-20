@@ -60,7 +60,7 @@ function Loginform() {
       }}
     >
       <Title order={1} size="50px" color="#00008B">
-        Create an account
+        Login
       </Title>
       <br />
       <form onSubmit={handleSubmit(onSubmit)}>
