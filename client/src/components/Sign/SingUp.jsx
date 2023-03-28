@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Title, RingProgress } from "@mantine/core";
+import { Box, Button, Title, RingProgress } from "@mantine/core";
 import {
   IconMail,
   IconUserCircle,
@@ -13,22 +13,21 @@ import {
   requiredValidator,
   emailValidator,
   passwordValidator,
-} from "../Forms/TextInput/validators";
+  usernameValidator,
+} from "../Forms/validators";
 import { useMutation } from "react-query";
 import api from "../../utils/api";
-import setAuthToken from "../../utils/setAuthToken";
-import { useNavigate } from "react-router-dom";
+import { showNotification } from "@mantine/notifications";
 
-
-function SignupForm() {
-  const navigate = useNavigate();
+function SignupForm({ onSwitchToSignIn }) {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
   } = useForm({
+    mode: "onChange",
     reValidateMode: "onChange",
   });
 
@@ -41,13 +40,22 @@ function SignupForm() {
         );
         return res.data.data;
       } catch (error) {
-        console.log(error.message);
+        showNotification({
+          title: "Auth Error",
+          message: error.response.data.message || error.response.data.error,
+          color: "red",
+        });
         throw new Error(error.response.data.message);
       }
     },
     {
       onSuccess: (profile) => {
-        setAuthToken(profile, navigate);
+        showNotification({
+          title: "Auth Success",
+          message: "User created successffuly",
+          color: "teal",
+        });
+        onSwitchToSignIn();
       },
     }
   );
@@ -74,7 +82,7 @@ function SignupForm() {
           required={true}
           register={register}
           errors={errors}
-          validate={{ requiredValidator }}
+          validate={{ requiredValidator, usernameValidator }}
           rightSection={<IconUserCircle color="#A9A9A9" />}
         />
         <br />
@@ -132,23 +140,16 @@ function SignupForm() {
             )
           }
         />
-        <br />
-        <Checkbox
-          label="I have read the Terms & Agreement"
-          color="red"
-          radius="md"
-        />
-        <br />
+        <br></br>
         <Button
           fullWidth
           style={{
-            background: "#FF3F4B",
             height: "50px",
           }}
           type="submit"
           color="red"
           radius="xl"
-          disabled={isLoading || !isFormValid}
+          disabled={isLoading || !isFormValid || !isValid || !isDirty}
         >
           {isLoading ? (
             <RingProgress
@@ -163,7 +164,7 @@ function SignupForm() {
               ]}
             />
           ) : (
-            "Sign In"
+            "Sign Up"
           )}
         </Button>
       </form>

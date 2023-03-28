@@ -5,6 +5,7 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import Comment from "../../components/Comments";
 import Like from "../../components/Like";
 
+
 const Post = ({ post, category, isLoading, }) => {
   const { _id: id, title, description, urlToImage } = post;
   const [opened, setOpened] = useState(false);
@@ -57,7 +58,7 @@ const Post = ({ post, category, isLoading, }) => {
 
       <Like category={category} post={post} id={id} />
 
-      <Box sx={{ textAlign: "center"  }} >
+      <Box sx={{ textAlign: "center" }}>
         <Button
           radius="sm"
           color="red"
@@ -70,12 +71,12 @@ const Post = ({ post, category, isLoading, }) => {
           {opened ? (
             <>
               <IconChevronUp size={12} style={{ marginRight: 4 }} />
-              Hide comments
+              {post.comments.length} comments
             </>
           ) : (
             <>
               <IconChevronDown size={12} style={{ marginRight: 4 }} />
-              Show comments
+              {post.comments.length} comments
             </>
           )}
         </Button>

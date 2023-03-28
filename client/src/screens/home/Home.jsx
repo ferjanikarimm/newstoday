@@ -1,5 +1,5 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import axios from "axios";
 import PostsList from "../PostList";
@@ -8,13 +8,25 @@ import Page404 from "../pageNotfound/Page404";
 import { isCategoryValid } from "../../utils/category";
 
 const Home = () => {
-  const { category, id } = useParams();
+  const { category } = useParams();
+  let [searchParams, setSearchParams] = useSearchParams();
+  const [page, setPage] = useState(parseInt(searchParams.get("page")) || 1);
+  const limit = 10;
+
+  useEffect(() => {
+    if (!searchParams.get("page")) {
+      setSearchParams({ page: 1, limit: 10 });
+      setPage(1);
+    } else {
+      setPage(parseInt(searchParams.get("page")));
+    }
+  }, [setSearchParams, searchParams, category]);
 
   const { isLoading, isError, data, error } = useQuery(
-    `news_${category}`,
+    [`news_${category}`, page],
     async () => {
       const { data } = await axios.get(
-        `http://localhost:5000/api/news/${category}`
+        `http://localhost:5000/api/news/${category}?page=${page}&limit=${limit}`
       );
       return data;
     }
@@ -38,14 +50,18 @@ const Home = () => {
   }
 
   return (
-    <PostsList
-      category={category}
-      isLoading={isLoading}
-      isError={isError}
-      error={error}
-      data={data}
-      id={id}
-    />
+    <>
+      <PostsList
+        category={category}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        data={data}
+        setPage={setPage}
+        page={page}
+        setSearchParams={setSearchParams}
+      />
+    </>
   );
 };
 

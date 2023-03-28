@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Title, RingProgress } from "@mantine/core";
+import { Box, Button, Title, RingProgress } from "@mantine/core";
 import { IconMail, IconEye, IconEyeOff } from "@tabler/icons-react";
 import axios from "axios";
 import React, { useState } from "react";
@@ -10,8 +10,9 @@ import {
   requiredValidator,
   emailValidator,
   passwordValidator,
-} from "../Forms/TextInput/validators";
+} from "../Forms/validators";
 import setAuthToken from "../../utils/setAuthToken";
+import { showNotification } from "@mantine/notifications";
 
 function Loginform() {
   const navigate = useNavigate();
@@ -20,8 +21,9 @@ function Loginform() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
   } = useForm({
+    mode: "onChange",
     reValidateMode: "onChange",
   });
 
@@ -34,7 +36,11 @@ function Loginform() {
         );
         return res.data.data;
       } catch (error) {
-        console.log(error.message);
+        showNotification({
+          title: "Auth Error",
+          message: error.response.data.message || error.response.data.error,
+          color: "red",
+        });
         throw new Error(error.response.data.message);
       }
     },
@@ -101,23 +107,16 @@ function Loginform() {
             )
           }
         />
-        <br />
-        <Checkbox
-          label="I have read the Terms & Agreement"
-          color="red"
-          radius="md"
-        />
-        <br />
         <Button
           fullWidth
           style={{
-            background: "#FF3F4B",
             height: "50px",
+            marginTop: 30,
           }}
           type="submit"
           color="red"
           radius="xl"
-          disabled={isLoading || !isFormValid}
+          disabled={isLoading || !isFormValid || !isValid || !isDirty}
         >
           {isLoading ? (
             <RingProgress

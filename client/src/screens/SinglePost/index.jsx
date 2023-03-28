@@ -9,11 +9,14 @@ import {
   Box,
   Tooltip,
 } from "@mantine/core";
-import { IconCaretLeft } from "@tabler/icons-react";
+import {
+  IconCaretLeft,
+  IconPlayerPauseFilled,
+  IconPlayerPlay,
+} from "@tabler/icons-react";
 import LoadingPage from "../LoadingPage/LoadingPage";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/api";
-
 import Comment from "../../components/Comments";
 import Page404 from "../pageNotfound/Page404";
 import Like from "../../components/Like";
@@ -114,9 +117,17 @@ const SinglePost = () => {
             </Text>
           </Tooltip>
         </Box>
+        <Card shadow="sm" p="xs" radius="md" style={{ position: "relative" }}>
+          {post.urlToImage && (
+            <div style={{ position: "relative" }}>
+              <Image
+                src={post.urlToImage}
+                alt={post.title}
+                style={{ width: "100%", borderRadius: "md" }}
+              />
+            </div>
+          )}
 
-        <Card shadow="sm" p="xs" radius="md">
-          {post.urlToImage && <Image src={post.urlToImage} alt={post.title} />}
           <Tooltip
             label={post.title}
             placement="top"
@@ -131,6 +142,10 @@ const SinglePost = () => {
 
           <Text size="sm" weight={480}>
             {post.description}
+          </Text>
+
+          <Text size="sm" weight={480} c="dimmed">
+            {post.content}
           </Text>
 
           <Like category={category} post={post} />

@@ -83,7 +83,7 @@ export default function AppShellDemo() {
                       localStorage.removeItem("profile");
                       navigate("/sign");
                     }}
-                    color="green"
+                    color="red"
                   >
                     Log out
                   </Menu.Item>
@@ -94,7 +94,7 @@ export default function AppShellDemo() {
                     onClick={() => {
                       navigate("/sign");
                     }}
-                    color="red"
+                    color="green"
                   >
                     Sign
                   </Menu.Item>

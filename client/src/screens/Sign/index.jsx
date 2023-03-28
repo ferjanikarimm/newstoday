@@ -11,12 +11,15 @@ const SIGN_UP = "SIGN_Up";
 
 function Login() {
   const { width } = useViewportSize();
-  const [signForm, setSignForm] = useState(SIGN_IN, SIGN_UP);
+  const [signForm, setSignForm] = useState(SIGN_IN);
   const navigate = useNavigate();
   const profile = localStorage.getItem("profile");
   if (profile) navigate("/latest");
-
   if (profile) return null;
+
+  const handelSwitchToSignIn = () => {
+    setSignForm(SIGN_IN);
+  };
 
   return (
     <Grid>
@@ -46,7 +49,9 @@ function Login() {
         </Group>
 
         {signForm === SIGN_IN && <SignInForm />}
-        {signForm === SIGN_UP && <SignUpForm />}
+        {signForm === SIGN_UP && (
+          <SignUpForm onSwitchToSignIn={handelSwitchToSignIn} />
+        )}
       </Grid.Col>
       {width > 800 && (
         <Grid.Col span={12} sm={6}>

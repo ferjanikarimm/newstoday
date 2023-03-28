@@ -4,7 +4,7 @@ import { MantineProvider } from "@mantine/core";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-
+import { NotificationsProvider } from "@mantine/notifications";
 import "./index.css";
 import App from "./App";
 import { theme } from "./theme";
@@ -15,7 +15,9 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
         <BrowserRouter>
-          <App />
+          <NotificationsProvider>
+            <App />
+          </NotificationsProvider>
         </BrowserRouter>
       </MantineProvider>
       <ReactQueryDevtools initialIsOpen={false} />

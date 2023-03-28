@@ -9,14 +9,23 @@ const {
 const User = require("../models/user");
 const { getModel } = require("../utils/news");
 
-const getAllModelNews = async (model, limit) => {
+const getAllModelNews = async (model, page = 1, limit = 10) => {
   try {
+    const count = await model.countDocuments({ urlToImage: { $ne: null } });
+    const totalPages = Math.ceil(count / limit);
+
+    if (page < 1 || page > totalPages) {
+      return { error: "Invalid page number" };
+    }
+
+    const skip = (page - 1) * limit;
     const categoryNews = await model
       .find({ urlToImage: { $ne: null } })
+      .skip(skip)
       .limit(limit)
       .exec();
-    const count = await model.countDocuments();
-    return { data: categoryNews.reverse(), count };
+
+    return { data: categoryNews.reverse(), count, totalPages };
   } catch (err) {
     console.error(err);
   }
@@ -25,44 +34,49 @@ const getAllModelNews = async (model, limit) => {
 // get all category news
 exports.getAllCategoryNews = async (req, res) => {
   const category = req.params.category;
+  const { page, limit } = req.query;
 
   switch (category) {
     //......sports
     case "sports":
-      return res.json({ sports: await getAllModelNews(sportsModel) });
+      return res.json({
+        sports: await getAllModelNews(sportsModel, page, limit),
+      });
     //......business
     case "business":
-      return res.json({ business: await getAllModelNews(businessModel) });
+      return res.json({
+        business: await getAllModelNews(businessModel, page, limit),
+      });
     //....entertainment
     case "entertainment":
       return res.json({
-        entertainment: await getAllModelNews(entertainmentModel),
+        entertainment: await getAllModelNews(entertainmentModel, page, limit),
       });
     //..... health
     case "health":
       return res.json({
-        health: await getAllModelNews(healthModel),
+        health: await getAllModelNews(healthModel, page, limit),
       });
     //.....science
     case "science":
       return res.json({
-        science: await getAllModelNews(scienceModel),
+        science: await getAllModelNews(scienceModel, page, limit),
       });
     //.......technology
     case "technology":
       return res.json({
-        technology: await getAllModelNews(technologyModel),
+        technology: await getAllModelNews(technologyModel, page, limit),
       });
 
     // ........... all
     case "latest":
       let allNews = await Promise.all([
-        getAllModelNews(sportsModel, 3),
-        getAllModelNews(businessModel, 3),
-        getAllModelNews(entertainmentModel, 3),
-        getAllModelNews(healthModel, 3),
-        getAllModelNews(scienceModel, 3),
-        getAllModelNews(technologyModel, 3),
+        getAllModelNews(sportsModel, 1, 3),
+        getAllModelNews(businessModel, 1, 3),
+        getAllModelNews(entertainmentModel, 1, 3),
+        getAllModelNews(healthModel, 1, 3),
+        getAllModelNews(scienceModel, 1, 3),
+        getAllModelNews(technologyModel, 1, 3),
       ]);
 
       return res.json({
@@ -77,7 +91,6 @@ exports.getAllCategoryNews = async (req, res) => {
 
   return res.json({});
 };
-
 const models = {
   sports: sportsModel,
   business: businessModel,

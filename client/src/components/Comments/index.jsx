@@ -12,13 +12,14 @@ import {
   Textarea,
 } from "@mantine/core";
 import { IconMessageCircle, IconTrash } from "@tabler/icons-react";
-
+import { useNavigate } from "react-router-dom";
 
 function Comment({ comments, isLoading, id, category, source = "list" }) {
   const numComments = comments ? comments?.length : 0;
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState("");
   const profile = JSON.parse(localStorage.getItem("profile") || "{}");
+  const navigate = useNavigate();
 
   const { isLoading: isCommentAdding, mutate: addComment } = useMutation(
     (commentText) =>
@@ -30,6 +31,12 @@ function Comment({ comments, isLoading, id, category, source = "list" }) {
         if (source === "post") queryClient.invalidateQueries(`post_${id}`);
         else if (source === "list")
           queryClient.invalidateQueries(`news_${category}`);
+      },
+      onError: (error, variables, context) => {
+        console.log({ error });
+        if (error?.response?.data?.message === "Beware, you are unauthorized") {
+          navigate("/sign");
+        }
       },
     }
   );
@@ -48,6 +55,12 @@ function Comment({ comments, isLoading, id, category, source = "list" }) {
         if (source === "post") queryClient.invalidateQueries(`post_${id}`);
         else if (source === "list")
           queryClient.invalidateQueries(`news_${category}`);
+      },
+      onError: (error, variables, context) => {
+        console.log({ error });
+        if (error?.response?.data?.message === "Beware, you are unauthorized") {
+          navigate("/sign");
+        }
       },
     }
   );
@@ -109,7 +122,7 @@ function Comment({ comments, isLoading, id, category, source = "list" }) {
           color="red"
           radius="sm"
           style={{ marginBottom: "0.4rem" }}
-          disabled={isCommentAdding}
+          disabled={isCommentAdding || !commentText}
           onClick={handleCommentSubmit}
         >
           {isCommentAdding ? "Adding..." : "Save"}
