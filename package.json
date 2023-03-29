@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "client": "cd client && npm start",
-    "start": "nodemon index.js",
-    "mern": "concurrently \" npm start\" \"npm run client\""
+    "server": "nodemon index.js",
+    "mern": "concurrently \" npm start\" \"npm run client\"",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",

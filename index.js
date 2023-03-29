@@ -2,6 +2,7 @@ const express = require("express");
 const scheduleJobs = require("./schedule-jobs");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 
 require("dotenv").config();
 
@@ -32,14 +33,19 @@ app.use(
   })
 );
 
+// Serve the static files from the React app
+app.use(express.static(path.join(__dirname, "public")));
+
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to aziz api." });
+  res.sendFile(path.join(__dirname + "/public/index.html"));
 });
 
 require("./routes/news")(app);
 require("./routes/user")(app);
 
-app.listen(5000, () => {
-  console.log("app start 5000");
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => {
+  console.log(`app start ${port}`);
 });
